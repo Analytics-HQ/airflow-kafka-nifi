@@ -3,6 +3,8 @@
     my-cluster-kafka-bootstrap.kafka:{9091, 9092, 9093}
     my-cluster-zookeeper-client.kafka:2181
 
+# put airflow-kafka-nifi.py in your dags folder
+
 # create input topic with two partitions
 
     bin/kafka-topics.sh --create --zookeeper my-cluster-zookeeper-client.kafka:2181 --replication-factor 1 --partitions 2 --topic  used-car-colors
