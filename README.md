@@ -1,7 +1,6 @@
 # AHQ kafka servers: 
 
-    my-cluster-kafka-bootstrap.kafka:{9091, 9092, 9093}
-    my-cluster-zookeeper-client.kafka:2181
+  
 
 1. put airflow-kafka-nifi.py in your dags folder
 
