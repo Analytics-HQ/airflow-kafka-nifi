@@ -29,4 +29,9 @@
 6. then produce data to it
 
         bin/kafka-console-producer.sh --broker-list app-kafka-cluster-kafka-brokers:9092 --topic used-car-colors-2
+        
+        
+7. To reset the kafka streams app:
+      
+        bin/kafka-streams-application-reset.sh --application-id used-car-colors-app --input-topics used-car-colors --intermediate-topics used-car-colors-output --bootstrap-servers localhost:9092 --zookeeper localhost:2181
 
