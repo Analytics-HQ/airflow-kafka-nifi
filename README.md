@@ -34,4 +34,6 @@
 7. To reset the kafka streams app:
       
         bin/kafka-streams-application-reset.sh --application-id used-car-colors-app --input-topics used-car-colors --intermediate-topics used-car-colors-output --bootstrap-servers localhost:9092 --zookeeper localhost:2181
+        
+        see https://www.confluent.io/blog/data-reprocessing-with-kafka-streams-resetting-a-streams-application/
 
