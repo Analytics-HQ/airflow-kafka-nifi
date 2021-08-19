@@ -20,33 +20,30 @@
       
         bin/kafka-streams-application-reset.sh --application-id used-car-colors-app --input-topics used-car-colors --intermediate-topics used-car-colors-output --bootstrap-servers <your-kafka-servers>:9092 --zookeeper <your-zookeeper>:2181
         
-        see https://www.confluent.io/blog/data-reprocessing-with-kafka-streams-resetting-a-streams-application/
-
-
+   see https://www.confluent.io/blog/data-reprocessing-with-kafka-streams-resetting-a-streams-application/
 
 
 ### SETUP: Developer/IDE
   
 1. put airflow-kafka-nifi.py in your dags folder
 
+2. launch a Kafka consumer for the output
 
-4. launch a Kafka consumer for the output
-
-        bin/kafka-console-consumer.sh --bootstrap-server app-kafka-cluster-kafka-brokers:9092 --topic used-car-colors-output
+        bin/kafka-console-consumer.sh --bootstrap-server <your-kafka-server>:9092 --topic used-car-colors-output
         
-5. launch a Kafka consumer for the unprocessed input
+3. launch a Kafka consumer for the unprocessed input
 
-        bin/kafka-console-consumer.sh --bootstrap-server app-kafka-cluster-kafka-brokers:9092 --topic used-car-colors-2
+        bin/kafka-console-consumer.sh --bootstrap-server <your-kafka-server>:9092 --topic used-car-colors-
 
-6. Java commands to start up the kafka streams project
+4. Java commands to start up the kafka streams project
 
         mvn clean package
         mvn exec:java -Dexec.mainClass=KafkaStreamsExample
     
 
-6. then produce data to it
+5. then produce data to it
 
-        bin/kafka-console-producer.sh --broker-list app-kafka-cluster-kafka-brokers:9092 --topic used-car-colors-2
+        bin/kafka-console-producer.sh --broker-list a<your-kafka-server>:9092 --topic used-car-colors
         
         
 
