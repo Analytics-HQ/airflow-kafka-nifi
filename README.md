@@ -38,7 +38,7 @@
 4. Java commands to start up the kafka streams project
 
         mvn clean package
-        mvn exec:java -Dexec.mainClass=KafkaStreamsExample
+        mvn exec:java -Dexec.mainClass=UsedCarColorsApp
     
 
 5. then produce data to it
