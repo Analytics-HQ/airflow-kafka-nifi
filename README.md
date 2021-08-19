@@ -1,4 +1,9 @@
-# AHQ kafka servers: 
+# Airflow-Kafka-Nifi AHQ Demonstration
+
+### This project is designed to demonstrate the following integrative features of AHQ: An ETL can be constructed that 
+  - gets information from a public API and parses it using python to dump the raw, flat json data into a Kafka topic via an Airflow DAG (`airflow-kafka-nifi.py`)
+  - with the input topic filled with the json from the public API in the Kafka topic `used-car-colors`, a Kafka Streams application takes the input and calculates the count of each color by year and outputs the topic to a new output topic in Kafka called `used-car-colors-output`
+  - A nifi instance running with a kafka consumer hooked up to the `used-car-colors-output` topic picks up the data and inputs the data to postgres.
 
   
 
