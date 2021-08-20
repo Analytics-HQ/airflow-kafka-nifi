@@ -44,9 +44,9 @@ public class UsedCarColorsApp
 {
     public static void main(String[] args)
     {
-        System.out.println("Starting up used-car-colors-app.");
+        System.out.println("Starting up used-car-colors-app-3.");
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "used-car-colors-app");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "used-car-colors-app-3");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put("auto.offset.reset", "earliest");
@@ -54,100 +54,63 @@ public class UsedCarColorsApp
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         
 
+        System.out.println("This is: " + props.getProperty(StreamsConfig.APPLICATION_ID_CONFIG));
+
         StreamsBuilder builder = new StreamsBuilder();
         
 
         KStream<byte[], UsedCars> usedCarsInputStream = 
             builder.stream("used-car-colors", Consumed.with(Serdes.ByteArray(), new UsedCarsSerdes()));
-
-            System.out.println(usedCarsInputStream.toString());
-   
-            
-            
             
             //k, v => year, countof cars in year
             KTable<String,Long> yearCount = usedCarsInputStream
-                .filter((k,v)->v.getYear() > 2010)
+                .filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> v.getVin())
-                .groupBy((key, value) -> Integer.toString(value.getYear()))
+                .groupBy((vin, usedcar) -> Integer.toString(usedcar.getYear()))
                 .count();
 
-            
+            //output to new topic
+            yearCount
+                .toStream()
+                .to("used-car-colors-totals-year", Produced.with(Serdes.String(), Serdes.Long()));
+                
+            //optionally print
+            // yearCount
+            //     .toStream()
+            //     .print(Printed.<String, Long>toSysOut().withLabel("years"));
+                    
 
             KTable<String,Long> colorCount = usedCarsInputStream
-                .filter((k,v)->v.getYear() > 2010)
+                .filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> v.getVin())
-                .groupBy((key, value) -> value.getColor())
+                .groupBy((vin, usedcar) -> usedcar.getColor())
                 .count();
 
-            usedCarsInputStream
-                .filter((k,v)->v.getYear() > 2010)
+            //output to new topic
+            colorCount
+                .toStream()
+                .to("used-car-colors-totals-color", Produced.with(Serdes.String(), Serdes.Long())); 
+            
+            //optionally print
+            // yearCount
+            //     .toStream()
+            //     .print(Printed.<String, Long>toSysOut().withLabel("years"));
+
+            KTable<YearColor,Long> yearColorGroupCount = usedCarsInputStream
+                .filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> new YearColor(v.getYear(), v.getColor()))
                 .groupByKey(Grouped.with(new YearColorSerdes(), new UsedCarsSerdes()))
-                .count()
+                .count();
+            
+            yearColorGroupCount
                 .toStream()
-                .peek((yc, ct) -> System.out.println("year: " + yc.getYear() + " color: " + yc.getColor() 
-                + " count: " + ct));
+                .to("used-car-colors-yearcolor-group", Produced.with(new YearColorSerdes(), Serdes.Long()));
 
-            
-                
-                // .foreach((year,count)->{
-
-                //     usedCarsInputStream
-                //         .filter((k,car)->Integer.toString(car.getYear())==year)
-                //         .selectKey((k,car) -> car.getColor())
-                //         .groupBy((k,car)->car.getColor())
-                //         .count()
-                //         .toStream()
-                //         .print(Printed.<String, Long>toSysOut().withLabel(year.toString()));
-                    
-                // });
-
-
-        List<String> years = new ArrayList<String>();
-        yearCount.toStream().foreach((y, c)->{years.add(y.toString());});
-
-            yearCount.toStream().print(Printed.<String, Long>toSysOut().withLabel("years"));
-            colorCount.toStream().print(Printed.<String, Long>toSysOut().withLabel("colors"));
-
-            
-
-
-
-
-
-            
-                    // usedCarsInputStream
-                    //     .filter((k,car)->Integer.toString(car.getYear())==y)
-                    //     .selectKey((k,car) -> car.getColor())
-                    //     .groupBy((k,car)->car.getColor())
-                    //     .count()
-                    //     .toStream()
-                    //     .print(Printed.<String, Long>toSysOut().withLabel(y.toString()));
-
-            
-
-               
-            System.out.println("done");
-            
-            // usedCarsInputStream
-            //     .filter((k,v)->v.getYear() > 2005)
-            //     // Set key to title and value to ticket value
-            //     .map((k, v) -> new KeyValue<>((String) v.getYear(), v.getTicketTotalValue()))
-            //     // Group by title
-            //     .groupByKey(Grouped.with(Serdes.String(), Serdes.Integer()))
-            //     // Apply SUM aggregation
-            //     .reduce(Integer::sum)
-            //     // Write to stream specified by outputTopic
+            //print if you want
+            // yearColorGroupCount
             //     .toStream()
+            //     .peek((yc, ct) -> System.out.println("year: " + yc.getYear() + " color: " + yc.getColor()));
                 
-                
-
-            //add to the used-car-colors-output topic
-            //yearCount.toStream().to("used-car-colors-output",  Produced.with(Serdes.String(), Serdes.Long())); 
-            //print to stdout as well
-      //yearCount.print(Printed.<String, Long>toSysOut().withLabel("yearcount")); 
-
 
         final Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, props);
@@ -175,13 +138,5 @@ public class UsedCarColorsApp
         System.exit(0);
 
     }    
-    private static JsonNode newCount(JsonNode transaction, JsonNode balance) {
-        // create a new balance json object
-        ObjectNode newCount = JsonNodeFactory.instance.objectNode();
-        newCount.put("count", balance.get("count").asInt() + 1);
-        newCount.put("balance", balance.get("balance").asInt() + transaction.get("amount").asInt());
-
-
-        return newCount;
-    }
+    
 }
