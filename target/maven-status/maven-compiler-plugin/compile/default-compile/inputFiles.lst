@@ -1,9 +1,0 @@
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/UsedCarsSerializer.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/UsedCarColorsApp.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/UsedCars.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/YearColorDeserializer.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/UsedCarsDeserializer.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/YearColorSerializer.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/YearColorSerdes.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/YearColor.java
-/home/moose/source/repos/airflow-kafka-nifi-ahq/src/main/java/myapps/UsedCarsSerdes.java
