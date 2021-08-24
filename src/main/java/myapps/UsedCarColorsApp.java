@@ -23,6 +23,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
@@ -64,7 +65,7 @@ public class UsedCarColorsApp
             
             //k, v => year, countof cars in year
             KTable<String,Long> yearCount = usedCarsInputStream
-                .filter((k,v)->v.getYear() >= 2010)
+                //.filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> v.getVin())
                 .groupBy((vin, usedcar) -> Integer.toString(usedcar.getYear()))
                 .count();
@@ -72,7 +73,8 @@ public class UsedCarColorsApp
             //output to new topic
             yearCount
                 .toStream()
-                .to("used-car-colors-totals-year", Produced.with(Serdes.String(), Serdes.Long()));
+                .map((k,v)->new KeyValue<>(k, v.toString()))
+                .to("used-car-colors-totals-year", Produced.with(Serdes.String(), Serdes.String()));
                 
             //optionally print
             // yearCount
@@ -81,7 +83,7 @@ public class UsedCarColorsApp
                     
 
             KTable<String,Long> colorCount = usedCarsInputStream
-                .filter((k,v)->v.getYear() >= 2010)
+                //.filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> v.getVin())
                 .groupBy((vin, usedcar) -> usedcar.getColor())
                 .count();
@@ -89,7 +91,8 @@ public class UsedCarColorsApp
             //output to new topic
             colorCount
                 .toStream()
-                .to("used-car-colors-totals-color", Produced.with(Serdes.String(), Serdes.Long())); 
+                .map((k,v)->new KeyValue<>(k, v.toString()))
+                .to("used-car-colors-totals-color", Produced.with(Serdes.String(), Serdes.String())); 
             
             //optionally print
             // yearCount
@@ -97,14 +100,16 @@ public class UsedCarColorsApp
             //     .print(Printed.<String, Long>toSysOut().withLabel("years"));
 
             KTable<YearColor,Long> yearColorGroupCount = usedCarsInputStream
-                .filter((k,v)->v.getYear() >= 2010)
+                //.filter((k,v)->v.getYear() >= 2010)
                 .selectKey((k,v) -> new YearColor(v.getYear(), v.getColor()))
                 .groupByKey(Grouped.with(new YearColorSerdes(), new UsedCarsSerdes()))
                 .count();
             
             yearColorGroupCount
                 .toStream()
-                .to("used-car-colors-yearcolor-group", Produced.with(new YearColorSerdes(), Serdes.Long()));
+                .mapValues((k,v)->new YearColorGrouping(k.getYear(), k.getColor(), v))
+                .to("used-car-colors-yearcolor-group", Produced.with(new YearColorSerdes(),new YearColorGroupingSerdes()));
+                
 
             //print if you want
             // yearColorGroupCount
