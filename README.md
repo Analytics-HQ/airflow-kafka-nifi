@@ -12,9 +12,12 @@
 
         bin/kafka-topics.sh --create --zookeeper <your-zookeeper>:2181 --replication-factor 1 --partitions 2 --topic  used-car-colors
         
-2. create output topic.  
+2. create output topics.  
 
-        bin/kafka-topics.sh --create --zookeeper <your-zookeeper>:2181 --replication-factor 1 --partitions 2 --topic used-car-colors-output
+        bin/kafka-topics.sh --create  --zookeeper localhost:2181 --replication-factor 1 --partitions 2  --topic used-car-colors-output \
+        bin/kafka-topics.sh --create  --zookeeper localhost:2181 --replication-factor 1 --partitions 2  --topic used-car-colors-yearcolor-group \ 
+        bin/kafka-topics.sh --create  --zookeeper localhost:2181 --replication-factor 1 --partitions 2  --topic used-car-colors-totals-color \
+        bin/kafka-topics.sh --create  --zookeeper localhost:2181 --replication-factor 1 --partitions 2  --topic used-car-colors-totals-year
         
 3. Every time the developer restartes the kafka stream application, this script will need to be re-run:
       
