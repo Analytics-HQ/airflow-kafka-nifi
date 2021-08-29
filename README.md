@@ -21,7 +21,7 @@
         
 3. Every time the developer restartes the kafka stream application, this script will need to be re-run:
       
-        bin/kafka-streams-application-reset.sh --application-id used-car-colors-app --input-topics used-car-colors --intermediate-topics used-car-colors-output --bootstrap-servers <your-kafka-servers>:9092 --zookeeper <your-zookeeper>:2181
+        bin/kafka-streams-application-reset.sh --application-id used-car-colors-app --input-topics used-car-colors --intermediate-topics used-car-colors-output used-car-colors-totals-year used-car-colors-yearcolor-group --bootstrap-servers <your-kafka-servers>:9092 --zookeeper <your-zookeeper>:2181
         
    see https://www.confluent.io/blog/data-reprocessing-with-kafka-streams-resetting-a-streams-application/
 
